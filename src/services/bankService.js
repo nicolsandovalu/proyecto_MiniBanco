@@ -6,22 +6,19 @@ import {
   query, 
   where, 
   getDocs, 
-  addDoc,
   onSnapshot,
   orderBy
 } from "firebase/firestore";
 
-// Suscripción al saldo en tiempo real
-export const subscribeToUserBalance = (uid, callback) => {
-  const userDocRef = doc(db, "users", uid);
-  return onSnapshot(userDocRef, (docSnap) => {
-    if (docSnap.exists()) {
-      callback(docSnap.data());
+export const subscribeToBalance = (uid, callback) => {
+  const userRef = doc(db, "users", uid);
+  return onSnapshot(userRef, (snapshot) => {
+    if (snapshot.exists()) {
+      callback(snapshot.data());
     }
   });
 };
 
-// Suscripción al historial de movimientos en tiempo real
 export const subscribeToTransactions = (uid, callback) => {
   const q = query(
     collection(db, "movimientos"),
@@ -29,56 +26,55 @@ export const subscribeToTransactions = (uid, callback) => {
     orderBy("fecha", "desc")
   );
   
-  return onSnapshot(q, (querySnapshot) => {
-    const movimientos = querySnapshot.docs.map(doc => ({
+  return onSnapshot(q, (snapshot) => {
+    const txList = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
-    callback(movimientos);
+    callback(txList);
   });
 };
 
-// Ejecución de transferencia segura y atómica
-export const executeTransfer = async (senderUid, targetEmail, amount) => {
+export const transferFunds = async (senderUid, targetEmail, amount) => {
   const cleanedEmail = targetEmail.trim().toLowerCase();
   
-  // 1. Buscar destinatario por Email
+  // Buscar destinatario por correo electrónico
   const usersRef = collection(db, "users");
   const q = query(usersRef, where("email", "==", cleanedEmail));
   const querySnapshot = await getDocs(q);
   
   if (querySnapshot.empty) {
-    throw new Error("El usuario destinatario no existe.");
+    throw new Error("El correo electrónico ingresado no corresponde a ningún cliente registrado.");
   }
   
-  const targetDoc = querySnapshot.docs[0];
-  const receiverUid = targetDoc.id;
-  const receiverData = targetDoc.data();
+  const receiverDoc = querySnapshot.docs[0];
+  const receiverUid = receiverDoc.id;
+  const receiverData = receiverDoc.data();
   
   if (senderUid === receiverUid) {
-    throw new Error("No puedes transferirte dinero a ti mismo.");
+    throw new Error("Operación no permitida: No puede realizar transferencias a sus propias cuentas.");
   }
 
   const senderDocRef = doc(db, "users", senderUid);
   const receiverDocRef = doc(db, "users", receiverUid);
 
-  // 2. Ejecutar la transacción atómica
+  // Ejecución de la transacción segura
   await runTransaction(db, async (transaction) => {
     const senderSnap = await transaction.get(senderDocRef);
-    if (!senderSnap.exists()) throw new Error("Error con la cuenta de origen.");
+    if (!senderSnap.exists()) throw new Error("Error de consistencia en la cuenta de origen.");
 
     const currentSenderBalance = senderSnap.data().saldo;
     if (currentSenderBalance < amount) {
-      throw new Error("Saldo insuficiente para completar la transacción.");
+      throw new Error("Fondos insuficientes para autorizar la transacción.");
     }
 
-    // Modificaciones de saldo concurrentes y seguras
+    // Actualizaciones de saldo concurrentes
     transaction.update(senderDocRef, { saldo: currentSenderBalance - amount });
     transaction.update(receiverDocRef, { saldo: receiverData.saldo + amount });
 
-    // Registrar el movimiento en la colección global
-    const movimientoRef = doc(collection(db, "movimientos"));
-    transaction.set(movimientoRef, {
+    // Registrar el recibo digital de la operación
+    const newTxRef = doc(collection(db, "movimientos"));
+    transaction.set(newTxRef, {
       emisorUid: senderUid,
       emisorNombre: senderSnap.data().nombre,
       emisorEmail: senderSnap.data().email,
@@ -87,7 +83,7 @@ export const executeTransfer = async (senderUid, targetEmail, amount) => {
       receptorEmail: receiverData.email,
       monto: amount,
       fecha: new Date().toISOString(),
-      participantes: [senderUid, receiverUid] // Indexación óptima para consultas en tiempo real
+      participantes: [senderUid, receiverUid]
     });
   });
 };
