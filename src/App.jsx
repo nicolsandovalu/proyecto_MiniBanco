@@ -64,7 +64,7 @@ export default function App() {
       />
       <TransactionHistory 
         transactions={transactions} 
-        userEmail={user.email} 
+        userUid={user.uid} 
       />
     </Dashboard>
   );
