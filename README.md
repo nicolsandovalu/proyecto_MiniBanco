@@ -1,16 +1,28 @@
-# React + Vite
+# NamiBank - Prototipo de Banca Digital SPA
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Proyecto desarrollado con React 18, Vite y Firebase (Auth y Firestore). 
+Implementa arquitectura reactiva, suscripciones en tiempo real (`onSnapshot`) y transaccionalidad atómica (`runTransaction`).
 
-Currently, two official plugins are available:
+## 🚀 Instalación y Ejecución Local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Clonar el repositorio.
+2. Instalar las dependencias ejecutando: `npm install`
+3. Crear un archivo llamado `.env` en la raíz del proyecto (basado en el `.env.example` o contactando al desarrollador por las credenciales).
+4. Levantar el servidor de desarrollo: `npm run dev`
 
-## React Compiler
+## 👥 Usuarios de Prueba para el Profesor
+Se han creado cuentas preconfiguradas con saldo para evaluar las transferencias sin necesidad de registrarse:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Usuario 1:** `nicol@namibank.cl` / Contraseña: `prueba123`
+* **Usuario 2:** `evaluador@namibank.cl` / Contraseña: `prueba123`
 
-## Expanding the Oxlint configuration
+## 📊 Modelo de Datos (Firestore)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+El proyecto utiliza bases de datos NoSQL con las siguientes colecciones:
+
+* `users/{uid}`: `{ nombre: string, email: string, saldo: number }`
+* `movimientos/{id}`: `{ emisorUid: string, emisorNombre: string, emisorEmail: string, receptorUid: string, receptorNombre: string, receptorEmail: string, monto: number, fecha: timestamp_ISO, participantes: array[uid] }`
+
+## 🤖 Declaración de Uso de IA
+
+Se utilizó inteligencia artificial (Gemini) principalmente como un par programador ("Rubber Duck Debugging"). Le pedí ayuda para estructurar de manera óptima la lógica de `runTransaction` (para asegurar la atomicidad de las transferencias en el backend) y para generar una paleta de colores CSS que simulara la identidad de un banco real sin usar `!important`. Tuve que corregir y ajustar manualmente la gestión de estados y las validaciones de los componentes para asegurarme de que el `App.jsx` orquestara correctamente los montajes y desmontajes.
