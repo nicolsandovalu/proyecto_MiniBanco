@@ -34,7 +34,7 @@ export default function TransferForm({ senderUid, currentBalance }) {
       await transferFunds(senderUid, email, numericAmount);
       setFeedback({ text: "¡Transferencia realizada con éxito! Los fondos han sido abonados.", type: "success" });
       setEmail("");
-      amount("");
+      setAmount("");
     } catch (error) {
       setFeedback({ text: error.message, type: "error" });
     } finally {
