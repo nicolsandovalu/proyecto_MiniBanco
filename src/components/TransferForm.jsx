@@ -1,79 +1,69 @@
 import { useState } from "react";
-import { executeTransfer } from "../services/bankService";
+import { transferFunds } from "../services/bankService";
 
 export default function TransferForm({ senderUid, currentBalance }) {
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ text: "", type: "" });
+  const [feedback, setFeedback] = useState({ text: "", type: "" });
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handleAmountChange = (e) => setAmount(e.target.value);
 
   const handleTransferSubmit = async (e) => {
     e.preventDefault();
-    setMessage({ text: "", type: "" });
+    setFeedback({ text: "", type: "" });
 
     const numericAmount = parseFloat(amount);
 
-    // Validaciones preventivas estrictas antes de invocar Firebase
     if (!email || !amount) {
-      setMessage({ text: "Completa todos los campos obligatorios.", type: "error" });
+      setFeedback({ text: "Debe rellenar todos los campos del formulario.", type: "error" });
       return;
     }
     if (isNaN(numericAmount) || numericAmount <= 0) {
-      setMessage({ text: "El monto debe ser un número superior a $0.", type: "error" });
+      setFeedback({ text: "El monto de la transferencia debe ser mayor a $0.", type: "error" });
       return;
     }
     if (numericAmount > currentBalance) {
-      setMessage({ text: "No posees saldo suficiente para esta operación.", type: "error" });
+      setFeedback({ text: "Operación rechazada: Fondos disponibles insuficientes.", type: "error" });
       return;
     }
 
     setLoading(true);
     try {
-      await executeTransfer(senderUid, email, numericAmount);
-      setMessage({ text: "¡Transferencia ejecutada con éxito!", type: "success" });
+      await transferFunds(senderUid, email, numericAmount);
+      setFeedback({ text: "¡Transferencia realizada con éxito! Los fondos han sido abonados.", type: "success" });
       setEmail("");
-      setAmount("");
+      amount("");
     } catch (error) {
-      setMessage({ text: error.message, type: "error" });
+      setFeedback({ text: error.message, type: "error" });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="card-box">
-      <h3>Realizar una Transferencia</h3>
-      {message.text && (
-        <div className={`status-message ${message.type}`}>
-          {message.text}
+    <div className="card-corporate">
+      <div className="card-header">
+        <h3>Transferencias a Terceros</h3>
+        <p>Transfiera fondos de forma segura e inmediata</p>
+      </div>
+      {feedback.text && (
+        <div className={`feedback-banner ${feedback.type}`}>
+          {feedback.text}
         </div>
       )}
       <form onSubmit={handleTransferSubmit}>
-        <div className="input-group">
-          <label>Email del Destinatario</label>
-          <input
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="ejemplo@correo.com"
-            disabled={loading}
-          />
+        <div className="form-group">
+          <label>Correo Electrónico Destinatario</label>
+          <input type="email" value={email} onChange={handleEmailChange} placeholder="destinatario@correo.cl" disabled={loading} />
         </div>
-        <div className="input-group">
-          <label>Monto ($)</label>
-          <input
-            type="number"
-            value={amount}
-            onChange={handleAmountChange}
-            placeholder="Monto a transferir"
-            disabled={loading}
-          />
+        <div className="form-group">
+          <label>Monto a Transferir ($)</label>
+          <input type="number" value={amount} onChange={handleAmountChange} placeholder="Monto en pesos chilenos" disabled={loading} />
         </div>
-        <button type="submit" className="action-btn" disabled={loading}>
-          {loading ? "Transfiriendo..." : "Enviar Dinero"}
+        <button type="submit" className="btn-accent" disabled={loading}>
+          {loading ? "Procesando TEF..." : "Confirmar Transferencia"}
         </button>
       </form>
     </div>

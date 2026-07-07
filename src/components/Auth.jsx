@@ -14,11 +14,11 @@ export default function Auth() {
   const handleNameChange = (e) => setName(e.target.value);
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Evita recarga involuntaria de página
+    e.preventDefault();
     setError("");
     
     if (!email || !password || (isRegister && !name)) {
-      setError("Por favor, completa todos los campos requeridos.");
+      setError("Todos los campos marcados son obligatorios.");
       return;
     }
 
@@ -30,52 +30,46 @@ export default function Auth() {
         await loginUser(email, password);
       }
     } catch (err) {
-      setError(err.message.replace("Firebase:", ""));
+      setError("Error de autenticación. Verifique sus credenciales o el estado de su red.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <h2>{isRegister ? "Crear Cuenta en XBank" : "Iniciar Sesión"}</h2>
-      {error && <div className="error-banner">{error}</div>}
-      
-      <form onSubmit={handleSubmit} className="auth-form">
-        {isRegister && (
-          <input
-            type="text"
-            placeholder="Nombre completo"
-            value={name}
-            onChange={handleNameChange}
-            disabled={loading}
-          />
-        )}
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={handleEmailChange}
-          disabled={loading}
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={handlePasswordChange}
-          disabled={loading}
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Procesando..." : isRegister ? "Registrarse" : "Entrar"}
+    <div className="auth-wrapper">
+      <div className="auth-brand">
+        <h2>NamiBank</h2>
+        <p>Banca Digital Corporativa</p>
+      </div>
+      <div className="auth-card">
+        <h3>{isRegister ? "Crear Cuenta" : "Acceso Clientes"}</h3>
+        {error && <div className="feedback-banner error">{error}</div>}
+        
+        <form onSubmit={handleSubmit}>
+          {isRegister && (
+            <div className="form-group">
+              <label>Nombre Completo</label>
+              <input type="text" value={name} onChange={handleNameChange} disabled={loading} placeholder="Ej. Juan Pérez" />
+            </div>
+          )}
+          <div className="form-group">
+            <label>Rut o Correo Electrónico</label>
+            <input type="email" value={email} onChange={handleEmailChange} disabled={loading} placeholder="usuario@namibank.cl" />
+          </div>
+          <div className="form-group">
+            <label>Contraseña Bancaria</label>
+            <input type="password" value={password} onChange={handlePasswordChange} disabled={loading} placeholder="••••••" />
+          </div>
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? "Verificando..." : isRegister ? "Registrar Cuenta" : "Ingresar Seguro"}
+          </button>
+        </form>
+        
+        <button className="btn-link" onClick={() => { setIsRegister(!isRegister); setError(""); }}>
+          {isRegister ? "¿Ya posee una cuenta? Inicie sesión aquí" : "¿Cliente nuevo? Regístrese de forma digital"}
         </button>
-      </form>
-      
-      <button 
-        className="toggle-btn" 
-        onClick={() => { setIsRegister(!isRegister); setError(""); }}
-      >
-        {isRegister ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí"}
-      </button>
+      </div>
     </div>
   );
 }
