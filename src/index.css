@@ -1,398 +1,309 @@
+/* ==========================================================================
+   NamiBank - UI Corporativa Fintech Mentolada (Cero Rojo & Mascota Real)
+   ========================================================================== */
+
 :root {
-  --bank-blue-deep: #0f265c;
-  --bank-blue-medium: #003399;
-  --bank-blue-light: #e6eefc;
-  --bank-gold: #d1a153;
-  --bank-gold-hover: #b88a3e;
-  --bank-bg-light: #f4f6f9;
-  --bank-card-white: #ffffff;
-  --bank-text-dark: #1e293b;
-  --bank-text-muted: #64748b;
-  --bank-success: #10b981;
-  --bank-success-bg: #ecfdf5;
-  --bank-error: #ef4444;
-  --bank-error-bg: #fef2f2;
-  --bank-border: #e2e8f0;
+  /* Paleta Corporativa Fintech - Modo Claro */
+  --bank-primary: #0A192F; /* Azul medianoche oscuro y elegante */
+  --bank-secondary: #1E3A8A; /* Azul real brillante */
+  --bank-accent: #10B981; /* Verde Esmeralda / Mentolado (Crecimiento & Dinero) */
+  --bank-accent-hover: #059669;
+  
+  --bank-bg-app: #F1F5F9; /* Gris pizarra muy limpio y suave */
+  --bank-surface: #FFFFFF;
+  --bank-text-main: #1E293B;
+  --bank-text-muted: #64748B;
+  --bank-border: #E2E8F0;
+  
+  /* Colores del Pelaje de Nami (Basados en su foto: Grafito & Carbón) */
+  --nami-fur-main: #334155; 
+  --nami-fur-dark: #1E293B;
+  --nami-muzzle: #475569;
+  --nami-bg-circle: rgba(16, 185, 129, 0.12);
+
+  /* Feedback Semántico */
+  --bank-success: #10B981;
+  --bank-success-bg: #D1FAE5;
+  --bank-error: #E11D48; /* Solo se usa en errores reales para no confundir */
+  --bank-error-bg: #FFE4E6;
+  
+  /* Formas Redondeadas Amigables */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 50px;
+  
+  /* Sombras y Profundidad */
+  --shadow-sm: 0 4px 10px rgba(10, 25, 47, 0.05);
+  --shadow-md: 0 10px 25px rgba(10, 25, 47, 0.1);
+  --shadow-btn: 0 6px 16px rgba(16, 185, 129, 0.25);
+  
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Tokens Modo Oscuro */
+.dark-mode {
+  --bank-primary: #1E293B;
+  --bank-secondary: #3B82F6;
+  --bank-accent: #00D09C; /* Mentolado eléctrico de alta visibilidad */
+  --bank-accent-hover: #10B981;
+  
+  --bank-bg-app: #0B1120; /* Azul nocturno ultra profundo */
+  --bank-surface: #131D33; 
+  --bank-text-main: #F8FAFC;
+  --bank-text-muted: #94A3B8;
+  --bank-border: #233354;
+  
+  /* Nami se ilumina ligeramente en el modo noche */
+  --nami-fur-main: #475569; 
+  --nami-fur-dark: #334155;
+  --nami-muzzle: #64748B;
+  --nami-bg-circle: rgba(0, 208, 156, 0.15);
+  
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.4);
+  --shadow-btn: 0 6px 16px rgba(0, 208, 156, 0.2);
+  
+  --bank-success-bg: rgba(16, 185, 129, 0.15);
+  --bank-error-bg: rgba(225, 29, 72, 0.15);
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--bank-bg-light);
-  color: var(--bank-text-dark);
-  font-family: 'Public Sans', system-ui, sans-serif;
+  margin: 0; padding: 0;
+  background-color: var(--bank-bg-app);
+  color: var(--bank-text-main);
+  font-family: 'Public Sans', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* Loaders */
-.screen-loader {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--bank-blue-deep);
-  color: white;
+/* ==========================================================================
+   1. Animaciones de Astros (Sol y Luna)
+   ========================================================================== */
+.sun-icon-animated {
+  animation: rotate-slow 16s linear infinite;
+  transform-origin: center;
 }
-
-.loader-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  border-top-color: var(--bank-gold);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
+.sun-core {
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+  transform-origin: center;
 }
-
-@keyframes spin {
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+@keyframes pulse-glow {
+  0% { transform: scale(0.9); opacity: 0.85; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
 
-/* Capa de Autenticación */
+.moon-icon-animated {
+  animation: tilt-moon 4s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+.moon-star {
+  animation: twinkle 1.5s ease-in-out infinite alternate;
+}
+.star-2 { animation-delay: 0.7s; }
+@keyframes tilt-moon {
+  0% { transform: rotate(-10deg); }
+  100% { transform: rotate(10deg); }
+}
+@keyframes twinkle {
+  0% { opacity: 0.3; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1.4); }
+}
+
+/* Botón Redondo de Tema (Pill/Circle) */
+.btn-theme-icon {
+  background-color: var(--bank-bg-app);
+  border: 1.5px solid var(--bank-border);
+  color: var(--bank-text-muted);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.btn-theme-icon:hover {
+  background-color: var(--bank-border);
+  transform: scale(1.1);
+}
+.auth-theme-btn { position: absolute; top: 20px; right: 20px; }
+
+/* ==========================================================================
+   2. Autenticación
+   ========================================================================== */
 .auth-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, var(--bank-blue-deep) 0%, #051026 100%);
-  padding: 20px;
+  display: flex; flex-direction: column; min-height: 100vh;
+  justify-content: center; align-items: center;
+  background: var(--bank-primary); 
+  background-image: radial-gradient(circle at top right, var(--bank-secondary) 0%, var(--bank-primary) 80%);
+  padding: 24px; position: relative;
+}
+.dark-mode .auth-wrapper {
+  background: #0B1120;
+  background-image: radial-gradient(circle at top right, #131D33 0%, #0B1120 80%);
 }
 
 .auth-brand {
-  text-align: center;
-  margin-bottom: 24px;
-  color: white;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  margin-bottom: 28px; color: #FFFFFF;
 }
-
-.auth-brand h2 {
-  font-size: 2.5rem;
-  margin: 0;
-  color: white;
-  letter-spacing: -1px;
-}
-
-.auth-brand p {
-  color: var(--bank-gold);
-  margin: 4px 0 0 0;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
+.auth-brand h2 { font-size: 2.8rem; font-weight: 700; margin: 0; letter-spacing: -0.5px; }
+.auth-brand p { color: rgba(255,255,255,0.85); margin: 6px 0 0 0; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 500; }
 
 .auth-card {
-  background-color: var(--bank-card-white);
-  padding: 40px;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
+  background-color: var(--bank-surface); padding: 48px 40px;
+  border-radius: var(--radius-lg); width: 100%; max-width: 440px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25); box-sizing: border-box;
+  transition: background-color 0.4s ease;
 }
+.auth-card h3 { margin: 0 0 32px 0; color: var(--bank-text-main); font-size: 1.6rem; font-weight: 700; text-align: center; }
 
-.auth-card h3 {
-  margin: 0 0 24px 0;
-  color: var(--bank-blue-deep);
-  font-size: 1.5rem;
-  border-bottom: 2px solid var(--bank-bg-light);
-  padding-bottom: 12px;
-}
-
-/* Formularios Estilo Corporativo */
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--bank-text-dark);
-}
+/* ==========================================================================
+   3. Formularios y Botones Redondeados
+   ========================================================================== */
+.form-group { margin-bottom: 24px; }
+.form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: var(--bank-text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
 .form-group input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--bank-border);
-  border-radius: 6px;
-  background-color: var(--bank-bg-light);
-  color: var(--bank-text-dark);
-  font-size: 100%;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
+  width: 100%; padding: 16px 20px; border: 2px solid var(--bank-border);
+  border-radius: var(--radius-pill); background-color: var(--bank-bg-app);
+  color: var(--bank-text-main); font-size: 1rem; box-sizing: border-box; transition: var(--transition);
 }
+.form-group input:focus { outline: none; border-color: var(--bank-secondary); background-color: var(--bank-surface); box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1); }
+.form-group input:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.form-group input:focus {
-  outline: none;
-  border-color: var(--bank-blue-medium);
-  background-color: var(--bank-card-white);
-}
-
-/* Botones */
+/* Botones Principales Redondos */
 .btn-primary {
-  width: 100%;
-  padding: 14px;
-  background-color: var(--bank-blue-deep);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  width: 100%; padding: 16px; background-color: var(--bank-primary); color: #FFFFFF;
+  border: none; border-radius: var(--radius-pill); font-size: 1.05rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition); box-shadow: 0 6px 16px rgba(10, 25, 47, 0.2);
 }
-
-.btn-primary:hover {
-  background-color: var(--bank-blue-medium);
-}
+.btn-primary:hover:not(:disabled) { background-color: var(--bank-secondary); transform: translateY(-2px); }
 
 .btn-accent {
-  width: 100%;
-  padding: 14px;
-  background-color: var(--bank-gold);
-  color: var(--bank-blue-deep);
-  border: none;
-  border-radius: 6px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  width: 100%; padding: 16px; background-color: var(--bank-accent); color: #FFFFFF;
+  border: none; border-radius: var(--radius-pill); font-size: 1.05rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-btn);
 }
+.btn-accent:hover:not(:disabled) { background-color: var(--bank-accent-hover); transform: translateY(-2px); }
 
-.btn-accent:hover {
-  background-color: var(--bank-gold-hover);
-}
+button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-.btn-link {
-  background: none;
-  border: none;
-  color: var(--bank-blue-medium);
-  margin-top: 16px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 0.9rem;
-}
+.btn-link { background: none; border: none; color: var(--bank-secondary); margin-top: 24px; cursor: pointer; width: 100%; font-size: 0.95rem; font-weight: 600; transition: var(--transition); }
+.btn-link:hover { color: var(--bank-primary); text-decoration: underline; }
 
-.btn-link:hover {
-  text-decoration: underline;
-}
+/* ==========================================================================
+   4. Dashboard Layout & Hero
+   ========================================================================== */
+.bank-layout { min-height: 100vh; background-color: var(--bank-bg-app); transition: background-color 0.4s ease; }
 
-/* Layout del Banco */
 .bank-navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--bank-blue-deep);
-  color: white;
-  padding: 16px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  background-color: var(--bank-surface); border-bottom: 1px solid var(--bank-border);
+  padding: 16px 48px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100;
+  transition: background-color 0.4s ease;
 }
-
-.navbar-brand h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  letter-spacing: -1px;
-  display: inline-block;
-  vertical-align: middle;
-}
+.navbar-brand h1 { margin: 0; font-size: 1.5rem; color: var(--bank-text-main); letter-spacing: -0.5px; }
+.subtitle-brand { font-size: 0.7rem; color: var(--bank-text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 
 .badge-corporate {
-  background-color: var(--bank-gold);
-  color: var(--bank-blue-deep);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin-left: 12px;
-  vertical-align: middle;
-  text-transform: uppercase;
+  background-color: var(--bank-accent); color: #FFFFFF; font-size: 0.65rem; font-weight: 700;
+  padding: 4px 10px; border-radius: var(--radius-pill); margin-left: 12px; text-transform: uppercase; letter-spacing: 0.5px;
 }
-
-.navbar-user {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.navbar-user p {
-  margin: 0;
-}
+.navbar-user { display: flex; align-items: center; gap: 20px; }
+.user-greeting { margin: 0; font-size: 0.95rem; }
 
 .btn-logout {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  background: none; border: 1.5px solid var(--bank-border); color: var(--bank-text-main);
+  padding: 10px 20px; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: var(--transition);
 }
+.btn-logout:hover { background-color: var(--bank-border); }
 
-.btn-logout:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Banner de Saldo (Estilo Banco de Chile) */
-.bank-hero {
-  background-color: var(--bank-blue-medium);
-  padding: 40px;
-  display: flex;
-  justify-content: center;
-}
+/* Hero Card */
+.bank-hero { background-color: var(--bank-primary); padding: 56px 20px; display: flex; justify-content: center; position: relative; overflow: hidden; }
+.dark-mode .bank-hero { background-color: #0B1120; border-bottom: 1px solid var(--bank-border); }
 
 .balance-card {
-  background-color: var(--bank-card-white);
-  border-radius: 8px;
-  padding: 24px 40px;
-  width: 100%;
-  max-width: 840px;
-  border-left: 6px solid var(--bank-gold);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background-color: var(--bank-surface); border-radius: var(--radius-lg); padding: 40px;
+  width: 100%; max-width: 920px; box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+  position: relative; z-index: 10; border-top: 6px solid var(--bank-accent);
 }
+.balance-label { display: block; font-size: 0.9rem; color: var(--bank-text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+.balance-value { font-size: 3.5rem; margin: 12px 0 24px 0; color: var(--bank-text-main); font-weight: 700; letter-spacing: -1.5px; }
 
-.balance-label {
-  display: block;
-  font-size: 0.9rem;
-  color: var(--bank-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+.balance-actions-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.balance-account { font-size: 0.95rem; color: var(--bank-text-muted); background-color: var(--bank-bg-app); padding: 8px 16px; border-radius: var(--radius-pill); font-family: 'Consolas', monospace; font-weight: 500; }
 
-.balance-value {
-  font-size: 2.8rem;
-  margin: 8px 0;
-  color: var(--bank-blue-deep);
-  font-weight: 700;
-}
+.action-buttons-group { display: flex; gap: 12px; }
+.btn-sim { padding: 10px 20px; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: var(--transition); font-size: 0.9rem;}
+.btn-pill-outline { background: transparent; color: var(--bank-text-main); border: 2px solid var(--bank-border); }
+.btn-pill-outline:hover:not(:disabled) { background-color: var(--bank-bg-app); border-color: var(--bank-text-muted); }
+.btn-pill-filled { background: var(--bank-accent); color: white; border: none; box-shadow: var(--shadow-sm); }
+.btn-pill-filled:hover:not(:disabled) { background: var(--bank-accent-hover); transform: translateY(-1px); }
 
-.balance-account {
-  font-size: 0.85rem;
-  color: var(--bank-text-muted);
-  font-family: monospace;
-}
-
-/* Estructura Modular del Panel */
-.bank-container {
-  padding: 40px 20px;
-  max-width: 920px;
-  margin: 0 auto;
-}
-
-.bank-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 30px;
-}
+/* ==========================================================================
+   5. Tarjetas y Transacciones
+   ========================================================================== */
+.bank-container { padding: 48px 20px; max-width: 960px; margin: 0 auto; }
+.bank-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 32px; align-items: start; }
 
 .card-corporate {
-  background-color: var(--bank-card-white);
-  border: 1px solid var(--bank-border);
-  border-radius: 8px;
-  padding: 30px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  background-color: var(--bank-surface); border: 1px solid var(--bank-border);
+  border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-sm); transition: var(--transition);
 }
+.card-corporate:hover { box-shadow: var(--shadow-md); }
 
-.card-header {
-  border-bottom: 1px solid var(--bank-border);
-  padding-bottom: 16px;
-  margin-bottom: 24px;
-}
+.card-header { border-bottom: 1px solid var(--bank-border); padding-bottom: 20px; margin-bottom: 24px; }
+.card-header h3 { margin: 0; color: var(--bank-text-main); font-size: 1.4rem; font-weight: 700; }
+.card-header p { margin: 6px 0 0 0; font-size: 0.95rem; color: var(--bank-text-muted); }
 
-.card-header h3 {
-  margin: 0;
-  color: var(--bank-blue-deep);
-  font-size: 1.25rem;
-}
+.feedback-banner { padding: 16px 24px; border-radius: var(--radius-md); margin-bottom: 24px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; }
+.feedback-banner.error { background-color: var(--bank-error-bg); color: var(--bank-error); border: 1px solid rgba(225, 29, 72, 0.2); }
+.feedback-banner.success { background-color: var(--bank-success-bg); color: var(--bank-success); border: 1px solid rgba(16, 185, 129, 0.2); }
 
-.card-header p {
-  margin: 4px 0 0 0;
-  font-size: 0.85rem;
-  color: var(--bank-text-muted);
-}
-
-/* Alertas de Feedback */
-.feedback-banner {
-  padding: 12px 16px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.feedback-banner.error {
-  background-color: var(--bank-error-bg);
-  color: var(--bank-error);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.feedback-banner.success {
-  background-color: var(--bank-success-bg);
-  color: var(--bank-success);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-/* Línea de Tiempo de Movimientos */
-.transaction-timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
+.transaction-timeline { display: flex; flex-direction: column; gap: 16px; }
 .transaction-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-radius: 6px;
-  background-color: var(--bank-bg-light);
-  border-right: 4px solid var(--bank-border);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px; border-radius: var(--radius-md);
+  background-color: var(--bank-surface); border: 1px solid var(--bank-border);
+  transition: var(--transition); position: relative; overflow: hidden;
 }
+.transaction-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+.transaction-item.debit::before { background-color: var(--bank-text-muted); }
+.transaction-item.credit::before { background-color: var(--bank-accent); }
+.transaction-item:hover { background-color: var(--bank-bg-app); transform: translateX(4px); }
 
-.transaction-item.debit {
-  border-right-color: var(--bank-error);
-}
+.tx-info { display: flex; flex-direction: column; gap: 4px; }
+.tx-concept { font-weight: 600; font-size: 1rem; color: var(--bank-text-main); }
+.tx-meta { font-size: 0.9rem; color: var(--bank-text-muted); }
+.tx-timestamp { font-size: 0.8rem; color: var(--bank-text-muted); margin-top: 6px; }
 
-.transaction-item.credit {
-  border-right-color: var(--bank-success);
-}
-
-.tx-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.tx-concept {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.tx-meta {
-  font-size: 0.85rem;
-  color: var(--bank-text-muted);
-}
-
-.tx-timestamp {
-  font-size: 0.75rem;
-  color: var(--bank-text-muted);
-}
-
-.tx-amount {
-  font-weight: 700;
-  font-size: 1.15rem;
-}
-
-.transaction-item.debit .tx-amount { color: var(--bank-error); }
-.transaction-item.credit .tx-amount { color: var(--bank-success); }
+.tx-amount { font-weight: 700; font-size: 1.3rem; }
+.transaction-item.debit .tx-amount { color: var(--bank-text-main); }
+.transaction-item.credit .tx-amount { color: var(--bank-accent); }
 
 .state-empty {
-  text-align: center;
-  color: var(--bank-text-muted);
-  padding: 40px 0;
-  font-size: 0.95rem;
+  text-align: center; color: var(--bank-text-muted); padding: 56px 0; font-size: 1.05rem;
+  border-radius: var(--radius-lg); border: 2px dashed var(--bank-border); background-color: var(--bank-bg-app); font-weight: 500;
 }
 
-@media (max-width: 600px) {
-  .bank-navbar { flex-direction: column; gap: 12px; padding: 16px; text-align: center; }
+/* ==========================================================================
+   6. Media Queries
+   ========================================================================== */
+@media (max-width: 768px) {
+  .bank-navbar { padding: 16px 20px; }
+  .balance-value { font-size: 2.8rem; }
   .bank-grid { grid-template-columns: 1fr; }
-  .balance-value { font-size: 2rem; }
+  .auth-card { padding: 40px 24px; }
+}
+@media (max-width: 480px) {
+  .bank-navbar { flex-direction: column; gap: 16px; text-align: center; }
+  .balance-card { padding: 24px; }
+  .balance-value { font-size: 2.2rem; }
+  .balance-actions-row { flex-direction: column; align-items: flex-start; }
+  .transaction-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .tx-amount { width: 100%; text-align: left; }
 }

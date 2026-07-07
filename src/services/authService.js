@@ -13,10 +13,10 @@ export const registerUser = async (email, password, displayName) => {
 
   await updateProfile(user, { displayName });
 
-  // Crear perfil inicial en Firestore con saldo obligatorio
+  // Crear la billetera inicial del usuario en Firestore
   await setDoc(doc(db, "users", user.uid), {
     nombre: displayName,
-    email: email.toLowerCase(),
+    email: email.toLowerCase().trim(),
     saldo: 100000
   });
 

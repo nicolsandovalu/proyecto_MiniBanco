@@ -1,11 +1,12 @@
 import { createContext, useContext, useReducer } from "react";
 
-// 1. Estado inicial
+// 1. Estado inicial con persistencia de tema nativo
 const initialState = {
   user: null,
   profile: null,
   transactions: [],
   initializing: true,
+  darkMode: localStorage.getItem("theme") === "dark",
 };
 
 // 2. Función Reductora (useReducer)
@@ -17,8 +18,13 @@ function bankReducer(state, action) {
       return { ...state, profile: action.payload };
     case "SET_TRANSACTIONS":
       return { ...state, transactions: action.payload };
+    case "TOGGLE_DARK_MODE":
+      const newMode = !state.darkMode;
+      localStorage.setItem("theme", newMode ? "dark" : "light");
+      return { ...state, darkMode: newMode };
     case "LOGOUT":
-      return { ...initialState, initializing: false };
+      // Conservamos el estado del tema al cerrar sesión
+      return { ...initialState, darkMode: state.darkMode, initializing: false };
     default:
       return state;
   }

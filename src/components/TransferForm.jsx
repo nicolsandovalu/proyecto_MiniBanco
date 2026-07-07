@@ -42,7 +42,7 @@ export default function TransferForm() {
       await transferFunds(senderUid, email, numericAmount);
       setFeedback({ text: "¡Transferencia realizada con éxito! Los fondos han sido abonados.", type: "success" });
       setEmail("");
-      setAmount(""); // <-- AQUÍ ESTÁ LA CORRECCIÓN
+      setAmount(""); 
     } catch (error) {
       setFeedback({ text: error.message, type: "error" });
     } finally {

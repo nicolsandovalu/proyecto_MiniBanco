@@ -1,22 +1,20 @@
 import { useState } from "react";
-import { useBank } from "../context/BankContext"; // <-- Importamos el contexto
+import { useBank } from "../context/BankContext"; 
 
 export default function TransactionHistory() {
-  // Ahora sacamos los datos del estado global, no de las props
   const { state } = useBank();
   const { user, transactions } = state;
   const userUid = user?.uid;
 
   const [filter, setFilter] = useState("ALL");
 
-  // Validación de seguridad por si transactions aún no carga
   if (!transactions || transactions.length === 0) {
     return (
       <div className="card-corporate">
         <div className="card-header">
           <h3>Últimos Movimientos</h3>
         </div>
-        <p className="state-empty" style={{ textAlign: 'center', padding: '30px 0', color: '#64748b' }}>
+        <p className="state-empty">
           Aún no tienes movimientos en tu cuenta corriente.
         </p>
       </div>
@@ -38,25 +36,26 @@ export default function TransactionHistory() {
           <p>Cartola de transacciones en tiempo real</p>
         </div>
         
+        {/* Filtros Limpios y Responsivos */}
         <div style={{ display: 'flex', gap: '8px' }}>
           <button 
+            className={`filter-btn ${filter === "ALL" ? "active all" : ""}`}
             onClick={() => setFilter("ALL")}
-            style={{ padding: '4px 10px', borderRadius: '4px', border: '1px solid #e2e8f0', background: filter === "ALL" ? '#0f265c' : 'white', color: filter === "ALL" ? 'white' : '#64748b', cursor: 'pointer' }}
           >Todas</button>
           <button 
+            className={`filter-btn ${filter === "RECEIVED" ? "active received" : ""}`}
             onClick={() => setFilter("RECEIVED")}
-            style={{ padding: '4px 10px', borderRadius: '4px', border: '1px solid #e2e8f0', background: filter === "RECEIVED" ? '#10b981' : 'white', color: filter === "RECEIVED" ? 'white' : '#64748b', cursor: 'pointer' }}
           >Recibidas</button>
           <button 
+            className={`filter-btn ${filter === "SENT" ? "active sent" : ""}`}
             onClick={() => setFilter("SENT")}
-            style={{ padding: '4px 10px', borderRadius: '4px', border: '1px solid #e2e8f0', background: filter === "SENT" ? '#ef4444' : 'white', color: filter === "SENT" ? 'white' : '#64748b', cursor: 'pointer' }}
           >Enviadas</button>
         </div>
       </div>
 
       <div className="transaction-timeline">
         {filteredTransactions.length === 0 ? (
-          <p className="state-empty" style={{ textAlign: 'center', padding: '30px 0', color: '#64748b' }}>
+          <p className="state-empty">
             No hay transacciones que coincidan con este filtro.
           </p>
         ) : (
