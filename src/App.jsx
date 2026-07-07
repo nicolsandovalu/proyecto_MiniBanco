@@ -1,47 +1,43 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/config";
 import { subscribeToBalance, subscribeToTransactions } from "./services/bankService";
+import { useBank } from "./context/BankContext"; // <-- IMPORTAR HOOK
 import Auth from "./components/Auth";
 import Dashboard from "./components/Dashboard";
 import TransferForm from "./components/TransferForm";
 import TransactionHistory from "./components/TransactionHistory";
 
 export default function App() {
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [transactions, setTransactions] = useState([]);
-  const [initializing, setInitializing] = useState(true);
+  const { state, dispatch } = useBank();
+  const { user, profile, transactions, initializing } = state;
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      dispatch({ type: "SET_AUTH", payload: currentUser });
       if (!currentUser) {
-        setProfile(null);
-        setTransactions([]);
+        dispatch({ type: "LOGOUT" });
       }
-      setInitializing(false);
     });
-
     return () => unsubscribeAuth();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!user) return;
 
     const unsubscribeBalance = subscribeToBalance(user.uid, (data) => {
-      setProfile(data);
+      dispatch({ type: "SET_PROFILE", payload: data });
     });
 
     const unsubscribeTx = subscribeToTransactions(user.uid, (data) => {
-      setTransactions(data);
+      dispatch({ type: "SET_TRANSACTIONS", payload: data });
     });
 
     return () => {
       unsubscribeBalance();
       unsubscribeTx();
     };
-  }, [user]);
+  }, [user, dispatch]);
 
   if (initializing) {
     return (
@@ -52,20 +48,13 @@ export default function App() {
     );
   }
 
-  if (!user) {
-    return <Auth />;
-  }
+  if (!user) return <Auth />;
 
   return (
-    <Dashboard user={user} profile={profile}>
-      <TransferForm 
-        senderUid={user.uid} 
-        currentBalance={profile ? profile.saldo : 0} 
-      />
-      <TransactionHistory 
-        transactions={transactions} 
-        userUid={user.uid} 
-      />
+    <Dashboard>
+      {/* Ya no pasamos props de usuario, los componentes pueden usar el Contexto */}
+      <TransferForm />
+      <TransactionHistory />
     </Dashboard>
   );
 }

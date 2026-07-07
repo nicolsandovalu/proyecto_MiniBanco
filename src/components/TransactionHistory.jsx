@@ -1,20 +1,28 @@
 import { useState } from "react";
+import { useBank } from "../context/BankContext"; // <-- Importamos el contexto
 
-export default function TransactionHistory({ transactions, userUid }) {
-  const [filter, setFilter] = useState("ALL"); // "ALL", "SENT", "RECEIVED"
+export default function TransactionHistory() {
+  // Ahora sacamos los datos del estado global, no de las props
+  const { state } = useBank();
+  const { user, transactions } = state;
+  const userUid = user?.uid;
 
-  if (transactions.length === 0) {
+  const [filter, setFilter] = useState("ALL");
+
+  // Validación de seguridad por si transactions aún no carga
+  if (!transactions || transactions.length === 0) {
     return (
       <div className="card-corporate">
         <div className="card-header">
           <h3>Últimos Movimientos</h3>
         </div>
-        <p className="state-empty">No se registran transacciones vigentes en el período actual.</p>
+        <p className="state-empty" style={{ textAlign: 'center', padding: '30px 0', color: '#64748b' }}>
+          Aún no tienes movimientos en tu cuenta corriente.
+        </p>
       </div>
     );
   }
 
-  // Lógica del filtro (derivada del estado puro)
   const filteredTransactions = transactions.filter((tx) => {
     const isSender = tx.emisorUid === userUid;
     if (filter === "SENT") return isSender;
@@ -24,13 +32,12 @@ export default function TransactionHistory({ transactions, userUid }) {
 
   return (
     <div className="card-corporate">
-      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h3>Últimos Movimientos</h3>
           <p>Cartola de transacciones en tiempo real</p>
         </div>
         
-        {/* Controles del Filtro (Bonus) */}
         <div style={{ display: 'flex', gap: '8px' }}>
           <button 
             onClick={() => setFilter("ALL")}
@@ -49,7 +56,9 @@ export default function TransactionHistory({ transactions, userUid }) {
 
       <div className="transaction-timeline">
         {filteredTransactions.length === 0 ? (
-          <p className="state-empty">No hay transacciones para este filtro.</p>
+          <p className="state-empty" style={{ textAlign: 'center', padding: '30px 0', color: '#64748b' }}>
+            No hay transacciones que coincidan con este filtro.
+          </p>
         ) : (
           filteredTransactions.map((tx) => {
             const isSender = tx.emisorUid === userUid;

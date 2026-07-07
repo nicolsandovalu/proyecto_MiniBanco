@@ -1,11 +1,25 @@
+import { useState } from "react";
 import { logoutUser } from "../services/authService";
+import { simulateTransaction } from "../services/bankService";
+import { useBank } from "../context/BankContext"; // <-- Usar contexto global
 
-export default function Dashboard({ user, profile, children }) {
+export default function Dashboard({ children }) {
+  const { state } = useBank();
+  const { user, profile } = state;
+  const [simLoading, setSimLoading] = useState(false);
+
   const handleLogoutClick = async () => {
+    await logoutUser();
+  };
+
+  const handleSimulation = async (amount) => {
+    setSimLoading(true);
     try {
-      await logoutUser();
+      await simulateTransaction(user.uid, amount);
     } catch (error) {
-      console.error("Error al revocar la sesión activa", error);
+      alert(error.message); // Feedback básico de error
+    } finally {
+      setSimLoading(false);
     }
   };
 
@@ -28,7 +42,24 @@ export default function Dashboard({ user, profile, children }) {
           <h2 className="balance-value">
             ${profile ? profile.saldo.toLocaleString("es-CL") : "---"}
           </h2>
-          <span className="balance-account">Cuenta Corriente Digital N° {user.uid.substring(0, 8).toUpperCase()}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="balance-account">Cuenta N° {user.uid.substring(0, 8).toUpperCase()}</span>
+            
+            {/* Botones de simulación (Bonus) */}
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button 
+                onClick={() => handleSimulation(-10000)} 
+                disabled={simLoading || profile?.saldo < 10000}
+                style={{ padding: '6px 12px', background: 'transparent', border: '1px solid #e2e8f0', borderRadius: '4px', cursor: 'pointer' }}
+              >Retirar $10.000</button>
+              
+              <button 
+                onClick={() => handleSimulation(10000)} 
+                disabled={simLoading}
+                style={{ padding: '6px 12px', background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+              >Abonar $10.000</button>
+            </div>
+          </div>
         </div>
       </div>
 

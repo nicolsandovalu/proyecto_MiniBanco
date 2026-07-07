@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { transferFunds } from "../services/bankService";
+import { useBank } from "../context/BankContext"; // <-- Importamos el contexto
 
-export default function TransferForm({ senderUid, currentBalance }) {
+export default function TransferForm() {
+  // Sacamos los datos del estado global
+  const { state } = useBank();
+  const { user, profile } = state;
+  
+  const senderUid = user?.uid;
+  const currentBalance = profile ? profile.saldo : 0;
+
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,7 +42,7 @@ export default function TransferForm({ senderUid, currentBalance }) {
       await transferFunds(senderUid, email, numericAmount);
       setFeedback({ text: "¡Transferencia realizada con éxito! Los fondos han sido abonados.", type: "success" });
       setEmail("");
-      setAmount("");
+      setAmount(""); // <-- AQUÍ ESTÁ LA CORRECCIÓN
     } catch (error) {
       setFeedback({ text: error.message, type: "error" });
     } finally {

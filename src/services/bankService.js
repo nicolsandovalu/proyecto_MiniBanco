@@ -20,10 +20,10 @@ export const subscribeToBalance = (uid, callback) => {
 };
 
 export const subscribeToTransactions = (uid, callback) => {
+  // Solo usamos where() para evitar el error de Índice Compuesto
   const q = query(
     collection(db, "movimientos"),
-    where("participantes", "array-contains", uid),
-    orderBy("fecha", "desc")
+    where("participantes", "array-contains", uid)
   );
   
   return onSnapshot(q, (snapshot) => {
@@ -31,7 +31,13 @@ export const subscribeToTransactions = (uid, callback) => {
       id: doc.id,
       ...doc.data()
     }));
+    
+    // Ordenamos el historial aquí (del más nuevo al más viejo)
+    txList.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    
     callback(txList);
+  }, (error) => {
+    console.error("Error silencioso de Firestore capturado:", error);
   });
 };
 
@@ -85,5 +91,24 @@ export const transferFunds = async (senderUid, targetEmail, amount) => {
       fecha: new Date().toISOString(),
       participantes: [senderUid, receiverUid]
     });
+  });
+};
+
+// Añadir al final de bankService.js
+export const simulateTransaction = async (uid, amount) => {
+  const userRef = doc(db, "users", uid);
+
+  await runTransaction(db, async (transaction) => {
+    const userSnap = await transaction.get(userRef);
+    if (!userSnap.exists()) throw new Error("Cuenta no encontrada.");
+
+    const currentBalance = userSnap.data().saldo;
+    const newBalance = currentBalance + amount;
+
+    if (newBalance < 0) {
+      throw new Error("Saldo insuficiente para realizar el retiro.");
+    }
+
+    transaction.update(userRef, { saldo: newBalance });
   });
 };
