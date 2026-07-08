@@ -12,7 +12,6 @@ export default function App() {
   const { state, dispatch } = useBank();
   const { user, initializing, darkMode } = state;
 
-  // Sincronización del tema visual reactivo con el DOM de la aplicación
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark-mode");
@@ -34,6 +33,7 @@ export default function App() {
   useEffect(() => {
     if (!user) return;
 
+    // Apertura de canales directos bidireccionales en tiempo real
     const unsubscribeBalance = subscribeToBalance(user.uid, (data) => {
       dispatch({ type: "SET_PROFILE", payload: data });
     });
@@ -42,6 +42,7 @@ export default function App() {
       dispatch({ type: "SET_TRANSACTIONS", payload: data });
     });
 
+    // Limpieza imperativa de la rúbrica para evitar fugas de memoria
     return () => {
       unsubscribeBalance();
       unsubscribeTx();

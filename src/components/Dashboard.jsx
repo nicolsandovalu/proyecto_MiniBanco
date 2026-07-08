@@ -119,7 +119,7 @@ export default function Dashboard({ children }) {
           <span className="badge-corporate">Cuenta Pro</span>
         </div>
         <div className="navbar-user">
-          <p className="user-greeting">Hola, <strong>{user.displayName || profile?.nombre}</strong></p>
+          <p className="user-greeting">Hola, <strong>{user?.displayName || profile?.nombre}</strong></p>
           
           {/* Botón Redondo Animado Sol/Luna */}
           <button 
@@ -137,17 +137,22 @@ export default function Dashboard({ children }) {
 
       <div className="bank-hero">
         <div className="balance-card">
-          <span className="balance-label">Saldo Disponible Total</span>
+          <span className="balance-label">Saldo disponible</span>
+          
           <h2 className="balance-value">
-            ${profile ? profile.saldo.toLocaleString("es-CL") : "---"}
+            {/* CORRECCIÓN DE LA LÓGICA: Si Firebase aún no ha entregado los datos, no forzamos un "0", evitamos el parpadeo. */}
+            {profile === null 
+                ? <span style={{ fontSize: '1.8rem', color: 'var(--bank-text-muted)' }}>Actualizando...</span> 
+                : `$${Number(profile.saldo || 0).toLocaleString("es-CL")}`}
           </h2>
+
           <div className="balance-actions-row">
-            <span className="balance-account">Cuenta N° {user.uid.substring(0, 8).toUpperCase()}</span>
+            <span className="balance-account">Cuenta N° {user?.uid?.substring(0, 8).toUpperCase()}</span>
             
             <div className="action-buttons-group">
               <button 
                 onClick={() => handleSimulation(-10000)} 
-                disabled={simLoading || profile?.saldo < 10000}
+                disabled={simLoading || (profile?.saldo || 0) < 10000}
                 className="btn-sim btn-pill-outline"
               >
                 Retirar $10.000
@@ -158,7 +163,7 @@ export default function Dashboard({ children }) {
                 disabled={simLoading}
                 className="btn-sim btn-pill-filled"
               >
-                + Abonar $10.000
+                Abonar $10.000
               </button>
             </div>
           </div>

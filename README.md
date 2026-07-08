@@ -3,6 +3,7 @@
 Proyecto desarrollado con React 18, Vite y Firebase (Auth y Firestore). 
 Implementa arquitectura reactiva, suscripciones en tiempo real (`onSnapshot`) y transaccionalidad atómica (`runTransaction`).
 
+
 ## 🚀 Instalación y Ejecución Local
 
 1. Clonar el repositorio.

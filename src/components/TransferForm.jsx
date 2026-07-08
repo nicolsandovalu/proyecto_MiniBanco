@@ -1,50 +1,47 @@
 import { useState } from "react";
-import { transferFunds } from "../services/bankService";
-import { useBank } from "../context/BankContext"; // <-- Importamos el contexto
+import { useBank } from "../context/BankContext";
+import { executeTransfer } from "../services/bankService";
 
 export default function TransferForm() {
-  // Sacamos los datos del estado global
   const { state } = useBank();
   const { user, profile } = state;
   
-  const senderUid = user?.uid;
-  const currentBalance = profile ? profile.saldo : 0;
-
-  const [email, setEmail] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState({ text: "", type: "" });
-
-  const handleEmailChange = (e) => setEmail(e.target.value);
-  const handleAmountChange = (e) => setAmount(e.target.value);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleTransferSubmit = async (e) => {
-    e.preventDefault();
-    setFeedback({ text: "", type: "" });
+    e.preventDefault(); // Regla estricta de la rúbrica: evitar recarga
+    setError("");
+    setSuccess("");
 
-    const numericAmount = parseFloat(amount);
+    const transferAmount = Number(amount);
 
-    if (!email || !amount) {
-      setFeedback({ text: "Debe rellenar todos los campos del formulario.", type: "error" });
-      return;
+    // 1. Validaciones previas en el Front-End
+    if (!recipientEmail || !amount) {
+      return setError("Por favor, completa todos los campos.");
     }
-    if (isNaN(numericAmount) || numericAmount <= 0) {
-      setFeedback({ text: "El monto de la transferencia debe ser mayor a $0.", type: "error" });
-      return;
+    if (transferAmount <= 0) {
+      return setError("El monto a transferir debe ser mayor a $0.");
     }
-    if (numericAmount > currentBalance) {
-      setFeedback({ text: "Operación rechazada: Fondos disponibles insuficientes.", type: "error" });
-      return;
+    if (transferAmount > profile.saldo) {
+      return setError("Saldo insuficiente para realizar esta operación.");
+    }
+    if (recipientEmail.toLowerCase() === user.email.toLowerCase()) {
+      return setError("No puedes transferir dinero a tu propia cuenta.");
     }
 
+    // 2. Ejecución de la transferencia
     setLoading(true);
     try {
-      await transferFunds(senderUid, email, numericAmount);
-      setFeedback({ text: "¡Transferencia realizada con éxito! Los fondos han sido abonados.", type: "success" });
-      setEmail("");
-      setAmount(""); 
-    } catch (error) {
-      setFeedback({ text: error.message, type: "error" });
+      await executeTransfer(user.uid, user.email, recipientEmail, transferAmount);
+      setSuccess(`Transferencia de $${transferAmount.toLocaleString("es-CL")} realizada con éxito.`);
+      setRecipientEmail("");
+      setAmount("");
+    } catch (err) {
+      setError(err.message || "Error al procesar la transferencia. Verifica el correo del destinatario.");
     } finally {
       setLoading(false);
     }
@@ -53,25 +50,45 @@ export default function TransferForm() {
   return (
     <div className="card-corporate">
       <div className="card-header">
-        <h3>Transferencias a Terceros</h3>
-        <p>Transfiera fondos de forma segura e inmediata</p>
+        <h3>Transferir Fondos</h3>
+        <p>Envía dinero a otros usuarios de NamiBank de forma segura.</p>
       </div>
-      {feedback.text && (
-        <div className={`feedback-banner ${feedback.type}`}>
-          {feedback.text}
-        </div>
-      )}
+
+      {error && <div className="feedback-banner error">{error}</div>}
+      {success && <div className="feedback-banner success">{success}</div>}
+
       <form onSubmit={handleTransferSubmit}>
         <div className="form-group">
-          <label>Correo Electrónico Destinatario</label>
-          <input type="email" value={email} onChange={handleEmailChange} placeholder="destinatario@correo.cl" disabled={loading} />
+          <label htmlFor="recipientEmail">Correo del Destinatario</label>
+          <input
+            id="recipientEmail"
+            type="email"
+            value={recipientEmail}
+            onChange={(e) => setRecipientEmail(e.target.value)}
+            disabled={loading}
+            placeholder="ejemplo@correo.com"
+          />
         </div>
+        
         <div className="form-group">
-          <label>Monto a Transferir ($)</label>
-          <input type="number" value={amount} onChange={handleAmountChange} placeholder="Monto en pesos chilenos" disabled={loading} />
+          <label htmlFor="amount">Monto a Transferir ($)</label>
+          <input
+            id="amount"
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            disabled={loading}
+            placeholder="0"
+            min="1"
+          />
         </div>
-        <button type="submit" className="btn-accent" disabled={loading}>
-          {loading ? "Procesando TEF..." : "Confirmar Transferencia"}
+
+        <button 
+          type="submit" 
+          className="btn-accent btn-pill-filled" 
+          disabled={loading || profile?.saldo === 0}
+        >
+          {loading ? "Procesando transferencia..." : "Transferir Ahora"}
         </button>
       </form>
     </div>

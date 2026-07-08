@@ -214,7 +214,23 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
   padding: 4px 10px; border-radius: var(--radius-pill); margin-left: 12px; text-transform: uppercase; letter-spacing: 0.5px;
 }
 .navbar-user { display: flex; align-items: center; gap: 20px; }
-.user-greeting { margin: 0; font-size: 0.95rem; }
+.user-greeting { 
+  margin: 0; 
+  font-size: 1.25rem; /* Aumentado considerablemente */
+  font-weight: 400; 
+  color: var(--bank-text-muted);
+}
+
+.user-greeting strong {
+  font-weight: 700;
+  color: var(--bank-primary); /* El nombre toma el color institucional fuerte */
+  letter-spacing: -0.5px; /* Ajuste tipográfico profesional */
+}
+
+/* Ajuste específico para que brille en el modo oscuro */
+.dark-mode .user-greeting strong {
+  color: var(--bank-accent); /* Usa el Teal/Esmeralda para contrastar en fondo oscuro */
+}
 
 .btn-logout {
   background: none; border: 1.5px solid var(--bank-border); color: var(--bank-text-main);
