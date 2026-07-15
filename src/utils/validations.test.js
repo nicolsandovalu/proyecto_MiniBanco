@@ -37,3 +37,11 @@ describe('RT2 - Lógica de Negocio: validateTransfer', () => {
     expect(result).toBe("No puedes transferir dinero a tu propia cuenta.");
   });
 });
+
+it.each([
+    ['texto', 10000, 'amigo@banco.cl', 'yo@banco.cl', "El monto debe ser un número válido."],
+    [500.50, 10000, 'amigo@banco.cl', 'yo@banco.cl', "No se permiten decimales."],
+    [5000, 10000, 'amigobanco.cl', 'yo@banco.cl', "El formato del correo es inválido."]
+  ])('Batería extra (Bonus): monto %s, correo %s retorna %s', (monto, saldo, dest, yo, esperado) => {
+    expect(validateTransfer(monto, saldo, dest, yo)).toBe(esperado);
+  });
