@@ -72,4 +72,21 @@ describe('RT4 - Componente: Historial', () => {
     await user.click(screen.getByRole('button', { name: /Recibidas/i }));
     expect(screen.getByText(/No hay transacciones que coincidan con este filtro/i)).toBeInTheDocument();
   });
+
+  it('5. Renderiza los movimientos ordenados del más reciente al más antiguo', () => {
+    const mockTx = [
+      { id: '1', emisorUid: '123', receptorEmail: 'amigo@banco.cl', monto: 5000, fecha: { seconds: 1000000000 } }, // Antiguo
+      { id: '2', emisorUid: '999', emisorEmail: 'jefe@banco.cl', monto: 15000, fecha: { seconds: 2000000000 } }  // Reciente
+    ];
+    
+    vi.spyOn(BankContext, 'useBank').mockReturnValue({ state: { user: { uid: '123' }, transactions: mockTx } });
+    render(<TransactionHistory />);
+    
+    // Obtenemos todos los elementos que muestran los correos (nuestra referencia visual)
+    const emails = screen.getAllByText(/@banco\.cl/);
+    
+    // Como el más reciente es 'jefe@banco.cl', debería aparecer primero en la lista (índice 0)
+    expect(emails[0]).toHaveTextContent('jefe@banco.cl');
+    expect(emails[1]).toHaveTextContent('amigo@banco.cl');
+  });
 });

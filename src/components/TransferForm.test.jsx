@@ -70,4 +70,23 @@ describe('RT3 - Componente React: TransferForm', () => {
     
     expect(submitBtn).toBeDisabled();
   });
+
+  it('5. Debe realizar la transferencia con éxito llamando al servicio (Caso Feliz)', async () => {
+    const user = userEvent.setup();
+    // 1. Arrange: Simulamos que Firebase responde OK
+    bankService.executeTransfer.mockResolvedValueOnce();
+
+    render(<TransferForm />);
+    
+    // 2. Act: Llenamos datos válidos
+    await user.type(screen.getByLabelText(/Correo del Destinatario/i), 'amigo@correo.cl');
+    await user.type(screen.getByLabelText(/Monto a Transferir/i), '20000');
+    await user.click(screen.getByRole('button', { name: /Transferir/i }));
+
+    // 3. Assert: Verificamos que se llamó a la base de datos exactamente 1 vez y con los datos precisos
+    expect(bankService.executeTransfer).toHaveBeenCalledTimes(1);
+    expect(bankService.executeTransfer).toHaveBeenCalledWith(
+      'uid-nami-123', 'nami@banco.cl', 'amigo@correo.cl', 20000
+    );
+  });
 });

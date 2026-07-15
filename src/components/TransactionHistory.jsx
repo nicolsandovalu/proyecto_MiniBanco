@@ -31,10 +31,18 @@ export default function TransactionHistory() {
   // PROGRAMACIÓN REACTIVA: Filtramos la lista basándonos en el estado antes de renderizar
   const filteredTransactions = transactions.filter((tx) => {
     const isSender = tx.emisorUid === user?.uid;
-    
     if (filter === "SENT") return isSender;
     if (filter === "RECEIVED") return !isSender;
     return true; // Si es "ALL", devolvemos todos
+  }).sort((a, b) => {
+    // Lógica para ordenar del más reciente al más antiguo
+    const getTime = (t) => {
+      if (!t) return 0;
+      if (typeof t.toDate === "function") return t.toDate().getTime();
+      if (t.seconds) return t.seconds * 1000;
+      return new Date(t).getTime() || 0;
+    };
+    return getTime(b.fecha) - getTime(a.fecha); // Descendente
   });
 
   return (
