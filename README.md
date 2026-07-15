@@ -68,23 +68,26 @@ La suite de pruebas consta de 21 tests en total. El proyecto supera exitosamente
 
 ```text
  % Coverage report from v8
--------------------------|---------|----------|---------|---------|
-File                     | % Stmts | % Branch | % Funcs | % Lines |
--------------------------|---------|----------|---------|---------|
-All files                |   79.67 |    83.07 |   66.66 |   79.88 |
- src                     |   92.85 |       90 |   77.77 |      92 |
-  App.jsx                |   92.85 |       90 |   77.77 |      92 |
- src/components          |   85.47 |    86.17 |      75 |   87.73 |
-  Auth.jsx               |   91.42 |    86.95 |      80 |   93.54 |
-  TransactionHistory.jsx |   91.89 |     90.9 |     100 |     100 |
-  TransferForm.jsx       |   96.15 |    91.66 |     100 |   96.15 |
- src/context             |   14.28 |        0 |       0 |   14.28 |
-  BankContext.jsx        |   14.28 |        0 |       0 |   14.28 |
- src/utils               |     100 |      100 |     100 |     100 |
-  validations.js         |     100 |      100 |     100 |     100 |
--------------------------|---------|----------|---------|---------|
+-------------------------|---------|----------|---------|---------|--------------------------
+File                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s        
+-------------------------|---------|----------|---------|---------|--------------------------
+All files                |   79.67 |    83.07 |   66.66 |   79.88 |                          
+ src                     |   92.85 |       90 |   77.77 |      92 |                          
+  App.jsx                |   92.85 |       90 |   77.77 |      92 | 38,42                    
+ src/components          |   85.47 |    86.17 |      75 |   87.73 |                          
+  Auth.jsx               |   91.42 |    86.95 |      80 |   93.54 | 49,87                    
+  Dashboard.jsx          |   47.36 |    66.66 |   33.33 |   47.36 | 77,92,96,100-106,154-162 
+  TransactionHistory.jsx |   91.89 |     90.9 |     100 |     100 | 12,23,40,43              
+  TransferForm.jsx       |   96.15 |    91.66 |     100 |   96.15 | 38                       
+ src/context             |   14.28 |        0 |       0 |   14.28 |                          
+  BankContext.jsx        |   14.28 |        0 |       0 |   14.28 | 12-27,34-42              
+ src/services            |      30 |      100 |       0 |      30 |                          
+  authService.js         |      30 |      100 |       0 |      30 | 11-23,27,31              
+ src/utils               |     100 |      100 |     100 |     100 |                          
+  validations.js         |     100 |      100 |     100 |     100 |                          
+-------------------------|---------|----------|---------|---------|--------------------------
  ```
-(Nota: El archivo BankContext.jsx mantiene intencionalmente un bajo porcentaje de cobertura debido a que las buenas prácticas de testing de componentes exigen aislar (mockear) el estado global para probar los componentes unitariamente).
+(Nota: El archivo BankContext.jsx, Dashboard.jsx y authService.js mantiene intencionalmente un bajo porcentaje de cobertura debido a que las buenas prácticas de testing de componentes exigen aislar (mockear) el estado global para probar los componentes unitariamente).
 
 <img width="717" height="755" alt="image" src="https://github.com/user-attachments/assets/5ad9e9da-64ed-4ff0-a5dd-3c238a054ea6" />
 
