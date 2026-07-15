@@ -78,7 +78,8 @@ All files                |   81.81 |    84.53 |      80 |   82.56 |
   BankContext.jsx        |   14.28 |        0 |       0 |   14.28 |
  utils                   |     100 |      100 |     100 |     100 |
   validations.js         |     100 |      100 |     100 |     100 |
--------------------------|---------|----------|---------|---------| ```
+-------------------------|---------|----------|---------|---------|
+ ```
 (Nota: El archivo BankContext.jsx mantiene intencionalmente un bajo porcentaje de cobertura debido a que las buenas prácticas de testing de componentes exigen aislar (mockear) el estado global para probar los componentes unitariamente).
 
 <img width="700" height="659" alt="image" src="https://github.com/user-attachments/assets/da55e987-8dbd-47b6-b20d-8f0d10bee701" />
