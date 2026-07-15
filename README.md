@@ -83,7 +83,8 @@ All files                |   81.81 |    84.53 |      80 |   82.56 |
  ```
 (Nota: El archivo BankContext.jsx mantiene intencionalmente un bajo porcentaje de cobertura debido a que las buenas prácticas de testing de componentes exigen aislar (mockear) el estado global para probar los componentes unitariamente).
 
-<img width="700" height="659" alt="image" src="https://github.com/user-attachments/assets/da55e987-8dbd-47b6-b20d-8f0d10bee701" />
+<img width="717" height="755" alt="image" src="https://github.com/user-attachments/assets/5ad9e9da-64ed-4ff0-a5dd-3c238a054ea6" />
+
 
 
 ## 🏗️ Refactorización para testeabilidad
