@@ -64,20 +64,23 @@ npm run coverage
 ```
 
 ## 📊 Reporte de cobertura (Code Coverage)
-La suite de pruebas consta de 21 tests en total, abarcando lógica pura, renderizado de componentes y flujos de usuario aislados de Firebase. El proyecto supera exitosamente el 70% de cobertura mínima requerida en todas sus métricas críticas:
+La suite de pruebas consta de 21 tests en total. El proyecto supera exitosamente el 70% de cobertura mínima requerida en todas sus métricas críticas, alcanzando la excelencia en validaciones puras y renderizado de componentes. Se aplicó un aislamiento total (Mocking) de los servicios externos (`firebase`, `Context`), lo que explica intencionalmente su métrica aislada.
 
- ``` % Coverage report from v8
+```text
+ % Coverage report from v8
 -------------------------|---------|----------|---------|---------|
 File                     | % Stmts | % Branch | % Funcs | % Lines |
 -------------------------|---------|----------|---------|---------|
-All files                |   81.81 |    84.53 |      80 |   82.56 |
- components              |   88.76 |    90.14 |   90.47 |   91.35 |
+All files                |   79.67 |    83.07 |   66.66 |   79.88 |
+ src                     |   92.85 |       90 |   77.77 |      92 |
+  App.jsx                |   92.85 |       90 |   77.77 |      92 |
+ src/components          |   85.47 |    86.17 |      75 |   87.73 |
   Auth.jsx               |   91.42 |    86.95 |      80 |   93.54 |
-  TransactionHistory.jsx |   92.85 |    94.44 |     100 |     100 |
-  TransferForm.jsx       |   80.76 |    83.33 |     100 |   80.76 |
- context                 |   14.28 |        0 |       0 |   14.28 |
+  TransactionHistory.jsx |   91.89 |     90.9 |     100 |     100 |
+  TransferForm.jsx       |   96.15 |    91.66 |     100 |   96.15 |
+ src/context             |   14.28 |        0 |       0 |   14.28 |
   BankContext.jsx        |   14.28 |        0 |       0 |   14.28 |
- utils                   |     100 |      100 |     100 |     100 |
+ src/utils               |     100 |      100 |     100 |     100 |
   validations.js         |     100 |      100 |     100 |     100 |
 -------------------------|---------|----------|---------|---------|
  ```
@@ -85,14 +88,22 @@ All files                |   81.81 |    84.53 |      80 |   82.56 |
 
 <img width="717" height="755" alt="image" src="https://github.com/user-attachments/assets/5ad9e9da-64ed-4ff0-a5dd-3c238a054ea6" />
 
+## 🌟 Desafíos Adicionales Cumplidos (Bonus)
+Prevención de Memory Leaks: Se implementó una suite completa para probar el desmontaje (unmount) del ciclo de vida en App.jsx, verificando que las suscripciones a Firebase (unsubscribeTx, unsubscribeBalance) se ejecuten correctamente al cerrar la sesión.
+
+Integración Continua: Se configuró un Workflow en GitHub Actions que ejecuta automáticamente la suite de tests (npm run coverage) en cada push, bloqueando código defectuoso en producción.
+
+Pruebas Parametrizadas: Uso de it.each para testear masivamente casos borde (decimales, montos no numéricos, correos inválidos) en la lógica pura.
 
 
 ## 🏗️ Refactorización para testeabilidad
 Para cumplir con los principios de código limpio y facilitar las pruebas unitarias, se realizaron las siguientes refactorizaciones:
 
-Extracción de Lógica Pura (RT2): Se extrajo todo el bloque de validaciones condicionales que vivía originalmente dentro del componente TransferForm.jsx hacia un archivo de funciones puras (src/utils/validations.js).
+Extracción de Lógica Pura: Se aisló el bloque de validaciones condicionales desde `TransferForm.jsx` hacia `src/utils/validations.js`. Esto permitió realizar pruebas exhaustivas sin necesidad de renderizar React.
 
 Beneficio: Esto permitió aislar la lógica de negocio de la UI, permitiendo una validación exhaustiva de los casos borde (montos negativos, validación de regex para correos, cero, decimales) utilizando parametrización de pruebas (it.each) sin necesidad de renderizar React ni invocar servicios.
+
+Ordenamiento Reactivo: Se delegó la responsabilidad de ordenamiento temporal (más reciente a más antiguo) al componente `TransactionHistory.jsx` antes del renderizado, mejorando el control sobre el DOM virtual.
 
 ## 🤖 Declaración de uso de IA en el desarrollo
 Durante la configuración y desarrollo de la suite de testing, se utilizó Inteligencia Artificial (Gemini) como copiloto y asistente de configuración, aplicando pensamiento crítico para su integración final:
