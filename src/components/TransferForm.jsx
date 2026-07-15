@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useBank } from "../context/BankContext";
 import { executeTransfer } from "../services/bankService";
+import { validateTransfer } from "../utils/validations";
 
 export default function TransferForm() {
   const { state } = useBank();
@@ -13,35 +14,28 @@ export default function TransferForm() {
   const [success, setSuccess] = useState("");
 
   const handleTransferSubmit = async (e) => {
-    e.preventDefault(); // Regla estricta de la rúbrica: evitar recarga
+    e.preventDefault(); 
     setError("");
     setSuccess("");
 
+    // 2. USAR LA LÓGICA PURA EXTRAÍDA (Reemplazando los múltiples if)
+    const validationError = validateTransfer(amount, profile?.saldo || 0, recipientEmail, user?.email);
+    
+    if (validationError) {
+      return setError(validationError);
+    }
+
     const transferAmount = Number(amount);
 
-    // 1. Validaciones previas en el Front-End
-    if (!recipientEmail || !amount) {
-      return setError("Por favor, completa todos los campos.");
-    }
-    if (transferAmount <= 0) {
-      return setError("El monto a transferir debe ser mayor a $0.");
-    }
-    if (transferAmount > profile.saldo) {
-      return setError("Saldo insuficiente para realizar esta operación.");
-    }
-    if (recipientEmail.toLowerCase() === user.email.toLowerCase()) {
-      return setError("No puedes transferir dinero a tu propia cuenta.");
-    }
-
-    // 2. Ejecución de la transferencia
+    // 3. Ejecución de la transferencia (esto queda igual)
     setLoading(true);
     try {
       await executeTransfer(user.uid, user.email, recipientEmail, transferAmount);
-      setSuccess(`Transferencia de $${transferAmount.toLocaleString("es-CL")} realizada con éxito.`);
+      setSuccess(`¡Transferencia de $${transferAmount.toLocaleString("es-CL")} realizada con éxito!`);
       setRecipientEmail("");
       setAmount("");
     } catch (err) {
-      setError(err.message || "Error al procesar la transferencia. Verifica el correo del destinatario.");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
