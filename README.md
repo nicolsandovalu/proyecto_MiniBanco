@@ -37,8 +37,9 @@ El proyecto utiliza bases de datos NoSQL con las siguientes colecciones:
 Se utilizó inteligencia artificial (Gemini) principalmente como un par programador ("Rubber Duck Debugging"). Le pedí ayuda para estructurar de manera óptima la lógica de `runTransaction` (para asegurar la atomicidad de las transferencias en el backend) y para generar una paleta de colores CSS que simulara la identidad de un banco real sin usar `!important`. Tuve que corregir y ajustar manualmente la gestión de estados y las validaciones de los componentes para asegurarme de que el `App.jsx` orquestara correctamente los montajes y desmontajes.
 
 # 🏦 NamiBank - Evaluación 3 (testing y cobertura)
+[![React Testing CI](https://github.com/nicolsandovalu/proyecto_MiniBanco/actions/workflows/test.yml/badge.svg)](https://github.com/nicolsandovalu/proyecto_MiniBanco/actions)
 
-NamiBank es una aplicación bancaria interactiva desarrollada con React. En esta fase del proyecto, se ha implementado una arquitectura orientada a la testeabilidad, integrando una suite completa de pruebas unitarias y de componentes.
+En esta fase del proyecto, se ha implementado una arquitectura orientada a la testeabilidad, integrando una suite completa de pruebas unitarias y de componentes.
 
 ## 🛠️ Stack tecnológico de testing
 * **Runner:** Vitest (nativo de Vite)
