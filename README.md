@@ -52,11 +52,11 @@ NamiBank es una aplicación bancaria interactiva desarrollada con React. En esta
 
 Para evaluar la suite de pruebas localmente, asegúrate de haber instalado las dependencias primero (`npm install`).
 
-1. **Ejecutar la suite de pruebas (Modo Interactivo):**
+**Ejecutar la suite de pruebas (Modo Interactivo):**
    ``` bash
    npm test
    ```
-Generar el reporte de Cobertura de Código:
+**Generar el reporte de Cobertura de Código:**
 
 ``` bash
 npm run coverage
@@ -80,6 +80,9 @@ All files                |   81.81 |    84.53 |      80 |   82.56 |
   validations.js         |     100 |      100 |     100 |     100 |
 -------------------------|---------|----------|---------|---------|
 (Nota: El archivo BankContext.jsx mantiene intencionalmente un bajo porcentaje de cobertura debido a que las buenas prácticas de testing de componentes exigen aislar (mockear) el estado global para probar los componentes unitariamente).
+
+<img width="700" height="659" alt="image" src="https://github.com/user-attachments/assets/da55e987-8dbd-47b6-b20d-8f0d10bee701" />
+
 
 ## 🏗️ Refactorización para testeabilidad
 Para cumplir con los principios de código limpio y facilitar las pruebas unitarias, se realizaron las siguientes refactorizaciones:
